@@ -1,29 +1,39 @@
 // Wait for the DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", function() {
   // Contact form handling
+  let public_key = "R6pBVvdsqv0wN_Gqi"
+  let service_id = "service_j6rxabe"
+  let template_id = "template_2g04g09"
+  emailjs.init(public_key);
+
   const contactForm = document.getElementById("contactForm");
-  
+
   if (contactForm) {
-    contactForm.addEventListener("submit", function(e) {
+    contactForm.addEventListener("submit", function (e) {
       e.preventDefault();
-      
-      // Get form values
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const message = document.getElementById("message").value;
-      
-      // Email submission logic using mailto
-      const emailSubject = encodeURIComponent(`Website Contact from ${name}`);
-      const emailBody = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-      const mailtoLink = `mailto:kssinnovate@gmail.com?subject=${emailSubject}&body=${emailBody}`;
-      
-      window.open(mailtoLink, '_blank');
-      
-      // Show toast notification
-      showToast("Message sent!", "Thank you for contacting us. We will get back to you soon.");
-      
-      // Reset form
-      contactForm.reset();
+
+      // Add current time dynamically to the form
+      const now = new Date().toLocaleString();
+      let timeInput = contactForm.querySelector("input[name='time']");
+
+      // If time field doesn't exist, create and append it
+      if (!timeInput) {
+        timeInput = document.createElement("input");
+        timeInput.type = "hidden";
+        timeInput.name = "time";
+        contactForm.appendChild(timeInput);
+      }
+      timeInput.value = now;
+
+      // Send form using EmailJS
+      emailjs.sendForm(service_id, template_id, this)
+        .then(function () {
+          alert("✅ Message sent successfully!");
+          contactForm.reset();
+        }, function (error) {
+          console.error("❌ Error sending message:", error);
+          alert("Failed to send message. Please try again.");
+        });
     });
   }
   
