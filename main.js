@@ -1,41 +1,30 @@
 // Wait for the DOM to be fully loaded
 document.addEventListener("DOMContentLoaded", function() {
   // Contact form handling
-  let public_key = "R6pBVvdsqv0wN_Gqi"
-  let service_id = "service_j6rxabe"
-  let template_id = "template_2g04g09"
-  emailjs.init(public_key);
+  const nodemailer = require('nodemailer');
 
-  const contactForm = document.getElementById("contactForm");
-
-  if (contactForm) {
-    contactForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      // Add current time dynamically to the form
-      const now = new Date().toLocaleString();
-      let timeInput = contactForm.querySelector("input[name='time']");
-
-      // If time field doesn't exist, create and append it
-      if (!timeInput) {
-        timeInput = document.createElement("input");
-        timeInput.type = "hidden";
-        timeInput.name = "time";
-        contactForm.appendChild(timeInput);
-      }
-      timeInput.value = now;
-
-      // Send form using EmailJS
-      emailjs.sendForm(service_id, template_id, this)
-        .then(function () {
-          alert("✅ Message sent successfully!");
-          contactForm.reset();
-        }, function (error) {
-          console.error("❌ Error sending message:", error);
-          alert("Failed to send message. Please try again.");
-        });
-    });
-  }
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'youremail@gmail.com',
+      pass: 'yourpassword_or_app_password'
+    }
+  });
+  
+  const mailOptions = {
+    from: 'youremail@gmail.com',
+    to: 'recipient@example.com',
+    subject: 'Subject Here',
+    text: 'Your message here'
+  };
+  
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
   
   // Smooth scrolling for anchor links
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
